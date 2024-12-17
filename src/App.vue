@@ -7,8 +7,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const todoStore = useTodoStore();
-const { todoItems, newTodo } = storeToRefs(todoStore);
-const addTodo = todoStore.addTodo;
+const { newTodo, todoItems } = storeToRefs(todoStore);
+const { addTodo, removeTodo, handleItemCheckbox } = todoStore;
 
 library.add(faTrash);
 </script>
@@ -19,24 +19,21 @@ library.add(faTrash);
     <div class="todo-list-wrapper">
       <div class="todo-list-container">
         <ul class="todo-list" v-if="todoItems.length > 0">
-          <li
-            v-for="(todoItem, index) in todoItems"
-            :key="index"
-            style="width: 100%; display: flex; justify-content: space-between"
-          >
+          <li v-for="(todoItem, index) in todoItems" :key="todoItem.id">
             <label :for="'todo-' + index">
-              <div style="display: flex; gap: 4px; align-items: center">
+              <div :class="{ completed: todoItem.completed }" class="item-text">
                 <input
                   type="checkbox"
                   name=""
                   :id="'todo-' + index"
-                  style="width: 16px; height: 16px; cursor: pointer"
+                  @click="handleItemCheckbox(index)"
+                  :value="todoItem.completed"
                 />
 
-                {{ todoItem }}
+                {{ todoItem.text }}
               </div>
 
-              <button class="delete-item" @click="todoStore.removeTodo(index)">
+              <button class="delete-item" @click="removeTodo(index)">
                 <font-awesome-icon :icon="['fas', 'trash']" />
               </button>
             </label>
@@ -44,7 +41,7 @@ library.add(faTrash);
         </ul>
 
         <div v-else class="empty-list">
-          <p>No items yet!</p>
+          <p>The list is empty!</p>
           <p>Add items below</p>
         </div>
       </div>
@@ -72,7 +69,7 @@ h1 {
 .todo-list-wrapper {
   width: 300px;
   height: 400px;
-  padding: 4px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -97,6 +94,9 @@ h1 {
 }
 
 .todo-list li {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   /* padding: 12px 16px; */
   background-color: azure;
   transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 1.4s;
@@ -119,6 +119,18 @@ h1 {
   align-items: center;
   align-content: center;
   justify-content: space-between;
+}
+.todo-list li label .item-text {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-weight: 500;
+}
+
+.todo-list li label .item-text.completed {
+  text-decoration: line-through;
+  color: gray;
+  font-weight: 100;
 }
 
 .empty-list {
@@ -160,13 +172,16 @@ h1 {
 }
 
 #submit-new-todo-fieldset {
-  display: flex;
   margin: 12px 0 4px;
+  display: flex;
+  gap: 8px;
 }
 
 #submit-new-todo-fieldset input {
   width: 100%;
   padding-left: 12px;
+  border: 1px solid aliceblue;
+  border-radius: 2px;
 }
 
 #submit-new-todo {
