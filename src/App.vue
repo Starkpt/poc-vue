@@ -2,19 +2,20 @@
 import { storeToRefs } from 'pinia';
 import { useTodoStore } from './stores/todoStore';
 
-const todoStore = useTodoStore();
-const { todoItems, newTodo } = storeToRefs(todoStore);
-const addTodo = todoStore.addTodo;
-
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+const todoStore = useTodoStore();
+const { todoItems, newTodo } = storeToRefs(todoStore);
+const addTodo = todoStore.addTodo;
 
 library.add(faTrash);
 </script>
 
 <template>
   <main>
+    <h1>To-do list</h1>
     <div class="todo-list-wrapper">
       <div class="todo-list-container">
         <ul class="todo-list" v-if="todoItems.length > 0">
@@ -35,11 +36,7 @@ library.add(faTrash);
                 {{ todoItem }}
               </div>
 
-              <button
-                class="button-remove"
-                @click="todoStore.removeTodo(index)"
-                style="width: 40px; height: 40px"
-              >
+              <button class="delete-item" @click="todoStore.removeTodo(index)">
                 <font-awesome-icon :icon="['fas', 'trash']" />
               </button>
             </label>
@@ -52,9 +49,9 @@ library.add(faTrash);
         </div>
       </div>
 
-      <div>
+      <div id="submit-new-todo-fieldset">
         <input name="new-todo" id="new-todo" v-model="newTodo" @keypress.enter="addTodo()" />
-        <button type="submit" @click="addTodo()">Add to-do item</button>
+        <button id="submit-new-todo" type="submit" @click="addTodo()">Create</button>
       </div>
     </div>
   </main>
@@ -62,15 +59,33 @@ library.add(faTrash);
 
 <style scoped>
 main {
+  width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+.todo-list-wrapper {
+  width: 300px;
+  height: 400px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: azure;
+  background-color: aliceblue;
+  border: 1px solid aliceblue;
+  border-radius: 4px;
 }
 
 .todo-list-container {
-  width: 300px;
   height: 400px;
-  background-color: azure;
-  border: 1px solid aliceblue;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .todo-list {
@@ -83,7 +98,8 @@ main {
 
 .todo-list li {
   /* padding: 12px 16px; */
-  animation: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 1.4s;
+  background-color: azure;
+  transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 1.4s;
 }
 
 .todo-list li:nth-of-type(even) {
@@ -111,8 +127,8 @@ main {
   justify-content: center;
   text-align: center;
   color: rgb(200, 221, 221);
-  width: 300px;
-  height: 400px;
+  /* width: 300px; */
+  height: 100%;
   background-color: azure;
   border: 1px solid aliceblue;
   padding: 8px 12px;
@@ -126,7 +142,46 @@ main {
   /* font-weight: 500; */
 }
 
-.button-remove {
-  padding: 4px 8px;
+.delete-item {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  background-color: crimson;
+  border: 0;
+  border-radius: 2px;
+  color: white;
+  cursor: pointer;
+
+  transition: background-color ease-in-out 0.2s;
+}
+
+.delete-item:hover {
+  background-color: red;
+}
+
+#submit-new-todo-fieldset {
+  display: flex;
+  margin: 12px 0 4px;
+}
+
+#submit-new-todo-fieldset input {
+  width: 100%;
+  padding-left: 12px;
+}
+
+#submit-new-todo {
+  padding: 8px;
+  background-color: cornflowerblue;
+  border: 0;
+  border-radius: 2px;
+  color: white;
+  font-weight: 600;
+
+  transition: background-color ease-in-out 0.2s;
+}
+
+#submit-new-todo:hover {
+  background-color: deepskyblue;
+  cursor: pointer;
 }
 </style>
