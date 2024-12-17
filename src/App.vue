@@ -73,7 +73,6 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: azure;
   background-color: aliceblue;
   border: 1px solid aliceblue;
   border-radius: 4px;
